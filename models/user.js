@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(FriendRequest, { foreignKey: 'senderId' });
-      this.hasMany(FriendRequest, { foreignKey: 'receiverId' });
-      this.hasMany(Contact, { foreignKey: 'userId' });
-      this.hasMany(Contact, { foreignKey: 'friendId' });
-      this.hasMany(Message, { foreignKey: 'senderId' });
-      this.hasMany(Message, { foreignKey: 'receiverId' });
+      this.hasMany(models.FriendRequest, { foreignKey: 'senderId' });
+      this.hasMany(models.FriendRequest, { foreignKey: 'receiverId' });
+      this.hasMany(models.Contact, { foreignKey: 'userId' });
+      this.hasMany(models.Contact, { foreignKey: 'friendId' });
+      this.hasMany(models.Message, { foreignKey: 'senderId' });
+      this.hasMany(models.Message, { foreignKey: 'receiverId' });
 
     }
   }

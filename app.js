@@ -40,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public/javascripts')));
 app.use(express.static(path.join(__dirname, 'public/images')));
 app.use(express.static(path.join(__dirname, 'public/avatars')));
 app.use(express.static(path.join(__dirname, 'public/img-por-defecto')));
+app.use(express.static(path.join(__dirname, 'public/svg')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

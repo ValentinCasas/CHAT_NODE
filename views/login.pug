@@ -8,5 +8,59 @@ block content
     link(rel="stylesheet" href="/login.css")
     script(src="/login.js" defer) 
 
-  body  
-    p login
+  body 
+
+
+    .container
+      section#formHolder
+      .row
+        // Brand Box
+        .col-sm-6.brand
+          a.logo(href='#') VC <span>.</span>
+
+          .heading
+            h2 Chat
+            p Conectate con el mundo!
+
+          .success-msg
+            p Great! You are one of our members now
+            a.profile(href='#') Tu perfil
+
+        // Form Box
+        .col-sm-6.form
+
+          // Login Form
+          .login.form-peice.switched
+            form.login-form(action='#' method='post')
+              .form-group
+                label(for='loginemail') Email
+                input#loginemail(type='email' name='loginemail', required)
+              .form-group
+                label(for='loginPassword') Contraseña
+                input#loginPassword(type='password' name='loginPassword', required)
+              .CTA
+                input(type='submit' value='Entrar')
+                a.switch(href='#') crear cuenta
+
+          // Signup Form
+          .signup.form-peice
+            form.signup-form(action='#' method='post')
+              .form-group
+                label(for='name' name="name") Nick
+                input.name(type='text' name='username' id='name')
+                span.error
+              .form-group
+                label(for='email' name="email") Email 
+                input.email(type='email' name='emailAdress' id='email')
+                span.error
+              .form-group
+                label(for='password' name="password") Contraseña
+                input.pass(type='password' name='password' id='password')
+                span.error
+              .form-group
+                label(for='passwordCon' name="confirmPassword") Confirmar contraseña
+                input.passConfirm(type='password' name='passwordCon' id='passwordCon')
+                span.error
+              .CTA
+                input#submit(type='submit' value='Registrarme')
+                a.switch(href='#') tengo una cuenta

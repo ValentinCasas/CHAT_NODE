@@ -9,9 +9,6 @@ const secretKey = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1
 exports.loginView = (req, res) => res.render('login');
 
 
-exports.registerView = (req, res) => res.render("register");
-
-
 exports.signUp = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   let routeImage = "";

@@ -4,9 +4,10 @@ var http = require('http');
 
 app.set("port", process.env.PORT || 3006);
 
-const server = app.lsiter(app.get("port",'0.0.0.0', () =>{
+const server = app.listen(app.get("port"), '0.0.0.0', () => {
   console.log("server on port " + app.get("port"));
-}));
+});
+
 
 const SocketIO = require('socket.io');
 const io = SocketIO(server);
