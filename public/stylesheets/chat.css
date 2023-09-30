@@ -1,0 +1,168 @@
+body {
+    background-color: #f0f0f0;
+}
+
+.container-fluid {
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+
+.sidebar {
+    border-right: 1px solid #ccc;
+    padding: 20px;
+}
+
+.contacts {
+    height: 100vh;
+    overflow-y: scroll;
+    position: relative;
+    padding: 0;
+}
+
+.friend__request {
+    position: sticky;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    height: 100px;
+    width: 100%;
+    background-color: #f95959;
+    z-index: 1;
+}
+
+.chat-content {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 10px;
+}
+
+.chat-card {
+    /*     padding: 5px; */
+}
+
+.chat-image img {
+    border: .1px solid rgba(226, 224, 224, 0.281);
+    max-width: 50px;
+}
+
+
+
+.chat-details {
+    padding-left: 10px;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.chat-message {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.badge-primary {
+    background-color: #007bff;
+    font-size: 0.8rem;
+}
+
+
+
+
+
+.chat-area {
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    /* Añade espacio en la parte inferior para la entrada de mensajes */
+}
+
+.chat-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.chat-image-header img {
+    width: 100px;
+    height: 100px;
+    border: .1px solid rgba(226, 224, 224, 0.281);
+    border-radius: 50%;
+    object-fit: cover;
+    /* Ajusta el tamaño de la imagen y la relación de aspecto */
+}
+
+.chat-details h3 {
+    margin: 0;
+}
+
+
+.chat-messages {
+    border: 1px solid #ccc;
+    height: auto;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    flex: 1;
+    /* Ocupa todo el espacio disponible en el medio */
+    overflow-y: auto;
+}
+
+.message-me {
+    padding: 10px;
+    padding-right: 30px;
+    padding-left: 30px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    border-bottom-right-radius: 50px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: #bba7a7;
+}
+
+.message-friend {
+    padding: 10px;
+    padding-right: 30px;
+    padding-left: 30px;
+    margin-bottom: 10px;
+    margin-right: 20px;
+    border-bottom-left-radius: 50px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+.message-sender {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-input {
+    display: flex;
+    align-items: center;
+    margin: 2px;
+}
+
+.chat-input input {
+
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.chat-input button {
+    padding: 10px;
+
+}

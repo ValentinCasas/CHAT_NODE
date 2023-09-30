@@ -8,45 +8,63 @@ const secretKey = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1
 
 exports.loginView = (req, res) => res.render('login');
 
+const passwordRegex = /^(?=.*\d).{8,}$/;
 
-exports.signUp = async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-  let routeImage = "";
-  let imagenPerfil;
+exports.signUp = async (req, res, next) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
 
-  if (password != confirmPassword) {
-    return res.render('register', { error: 'Las contraseñas no coinciden' });
-  }
+    let imagePath = "";
+    let imageUrl;
 
-  if (req.files === null) {
-    routeImage = "img-por-defecto/noAutenticated.png";
-  } else {
-    imagenPerfil = req.files.imagenPerfil;
-    routeImage = uuid.v1() + imagenPerfil.name;
-  }
+    if (password != confirmPassword) {
+      return res.json({ success: false, error: 'Passwords do not match' });
+    }
 
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash(password, salt);
+    if (!passwordRegex.test(password)) {
+      return res.json({ success: false, error: 'Password must be at least 8 characters long and contain a number.' });
+    }
 
-  await User.findOne({ where: { email: email } })
-    .then(user => {
-      if (!user) {
-        User.create({
-          name: name,
-          email: email,
-          password: passwordHash,
-          avatarUrl: routeImage,
-        }).then(() => {
-          if (avatarUrl) {
-            avatarUrl.mv("./public/avatars/" + routeImage);
-          }
-          res.render("login");
-        });
-      } else {
-        res.render('register', { error: 'Ya hay un usuario con el email: ' + email });
-      }
+    if (req.files === null) {
+      imagePath = "noAuthenticated.png";
+    } else {
+      imageUrl = req.files.imageUrl;
+      imagePath = uuid.v1() + imageUrl.name;
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const existingUserEmail = await User.findOne({ where: { email: email } });
+    if (existingUserEmail) {
+      return res.json({ success: false, error: 'A user with the email ' + email + ' already exists.' });
+    }
+
+    const existingUserName = await User.findOne({ where: { name: name } });
+    if (existingUserName) {
+      return res.json({ success: false, error: 'El nick ' + name + ' ya está en uso.' });
+    } else if (name.length() < 6) {
+      return res.json({ success: false, error: 'Debe tener al menos 6 caracteres ' + name + ' is already in use.' });
+    }
+
+    const newUser = await User.create({
+      name: name,
+      email: email,
+      password: hashedPassword,
+      avatarUrl: imagePath,
     });
+
+    if (imageUrl) {
+      imageUrl.mv("./public/avatars/" + imagePath);
+    }
+
+    res.json({ success: true, message: 'User created successfully' });
+  } catch (error) {
+    next(error);
+  }
 };
+
+
 
 
 exports.login = async (req, res) => {

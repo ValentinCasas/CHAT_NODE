@@ -2,22 +2,26 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "database_development",
+    "database": "CHAT_NODE",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "secretKey": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4OTg3OTYzMCwiaWF0IjoxNjg5ODc5NjMwfQ.EW7Yk6kbmR5s3L1MeyVNoV8x4_T3FZOLPBYPOdO6KJQ"
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "database_test",
+    "database": "CHAT_NODE",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "secretKey": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4OTg3OTYzMCwiaWF0IjoxNjg5ODc5NjMwfQ.EW7Yk6kbmR5s3L1MeyVNoV8x4_T3FZOLPBYPOdO6KJQ"
   },
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
+    "database": "CHAT_NODE",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "secretKey": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4OTg3OTYzMCwiaWF0IjoxNjg5ODc5NjMwfQ.EW7Yk6kbmR5s3L1MeyVNoV8x4_T3FZOLPBYPOdO6KJQ"
   }
 }
+

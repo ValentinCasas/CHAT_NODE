@@ -9,4 +9,61 @@ block content
     script(src="/chat.js" defer) 
 
   body  
-    P chat
+
+    .container-fluid
+      .row
+        // Panel de chat
+        .col-md-4.col-lg-4.bg-light.contacts
+          // Contenido del panel de chat
+          each item in [1,2,3,4,5,6,7,8,9,10] 
+            .chat-content
+              .chat-card
+                .d-flex
+                  .chat-image
+                    img(src='noAuthenticated.png' alt='Imagen de Usuario' class='img-fluid rounded-circle')
+                  .chat-details
+                    h3.mt-2 ValenCasas
+                    .chat-message
+                      p Último mensaje del usuario
+                    .chat-header
+                      span 00:30
+
+          .friend__request
+            a Encontrar gente 
+
+
+        // Área de chat principal
+        .col-md-8.col-lg-8
+          // Contenido del área de chat principal
+          .chat-area
+            // Parte superior: Imagen y nombre del chat
+            .chat-header
+              .chat-image-header
+                img(src='noAuthenticated.png' alt='Imagen de Usuario')
+              .chat-details
+                h3 ValenCasas
+
+            // Parte media: Mensajes
+
+            .chat-messages
+              each item in [1,2,3,4,5,6,7,8,9,10]  
+                // Mensaje de ejemplo
+                .message-friend
+                  .message-sender
+                    strong PiaLucero
+                    p 00:30
+                  .message-text-friend
+                    p Hola, ¿cómo estás?
+
+                .message-me
+                  .message-sender
+                    strong ValenCasas
+                    p 00:30
+                  .message-text-me
+                    p Bien y vos?
+
+
+            // Parte inferior: Campo de entrada de mensajes
+            .chat-input
+              input(type='text' placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
+              button.btn.btn-primary.col.col-md-2.col-sm-2 Enviar

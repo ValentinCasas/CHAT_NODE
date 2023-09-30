@@ -31,36 +31,38 @@ block content
 
           // Login Form
           .login.form-peice.switched
-            form.login-form(action='#' method='post')
+            form.login-form(action='/auth/login' method='post')
               .form-group
-                label(for='loginemail') Email
-                input#loginemail(type='email' name='loginemail', required)
+                label(for='email') Email
+                input#loginemail(type='email' name='email', required)
               .form-group
-                label(for='loginPassword') Contraseña
-                input#loginPassword(type='password' name='loginPassword', required)
+                label(for='password') Contraseña
+                input#loginPassword(type='password' name='password', required)
               .CTA
                 input(type='submit' value='Entrar')
                 a.switch(href='#') crear cuenta
 
           // Signup Form
           .signup.form-peice
-            form.signup-form(action='#' method='post')
+            form.signup-form(action='/auth/signUp' method='post' enctype="multipart/form-data")
               .form-group
-                label(for='name' name="name") Nick
-                input.name(type='text' name='username' id='name')
+                label(for='name') Nick
+                input.name(type='text' name='name' id='name')
                 span.error
               .form-group
-                label(for='email' name="email") Email 
-                input.email(type='email' name='emailAdress' id='email')
+                label(for='email') Email 
+                input.email(type='email' name='email' id='email')
                 span.error
               .form-group
-                label(for='password' name="password") Contraseña
+                label(for='password') Contraseña
                 input.pass(type='password' name='password' id='password')
                 span.error
               .form-group
-                label(for='passwordCon' name="confirmPassword") Confirmar contraseña
-                input.passConfirm(type='password' name='passwordCon' id='passwordCon')
+                label(for='confirmPassword') Confirmar contraseña
+                input.passConfirm(type='password' name='confirmPassword' id='confirmPassword')
                 span.error
+              .form-group.file-upload
+                input.imagenPerfil(type="file" name="imagenUrl" id="imagenPerfil" class="file-input" accept="image/*")  
               .CTA
                 input#submit(type='submit' value='Registrarme')
                 a.switch(href='#') tengo una cuenta
