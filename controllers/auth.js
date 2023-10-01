@@ -28,7 +28,7 @@ exports.signUp = async (req, res, next) => {
     if (req.files === null) {
       imagePath = "noAuthenticated.png";
     } else {
-      imageUrl = req.files.imageUrl;
+      imageUrl = req.files.imagenUrl;
       imagePath = uuid.v1() + imageUrl.name;
     }
 
@@ -40,12 +40,16 @@ exports.signUp = async (req, res, next) => {
       return res.json({ success: false, error: 'A user with the email ' + email + ' already exists.' });
     }
 
+    if (name.length < 6) {
+      return res.json({ success: false, error: 'Debe tener al menos 6 caracteres' });
+    }
+
     const existingUserName = await User.findOne({ where: { name: name } });
     if (existingUserName) {
       return res.json({ success: false, error: 'El nick ' + name + ' ya está en uso.' });
-    } else if (name.length() < 6) {
-      return res.json({ success: false, error: 'Debe tener al menos 6 caracteres ' + name + ' is already in use.' });
     }
+
+    // Resto del código de creación de usuario
 
     const newUser = await User.create({
       name: name,

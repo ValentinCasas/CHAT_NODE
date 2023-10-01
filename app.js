@@ -49,17 +49,20 @@ app.use(upload({ limits: { fileSize: 10 * 1024 * 1024 } }));
 app.use(cookieParser());
 
 app.use(function (req, res, next) {
-  const token = req.cookies.token;
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, secretKey);
-      req.user = decoded;
-    } catch (error) {
-      console.error("Token inválido ", error);
-    } {
+  if (!req.path.startsWith("/auth")) {
+    const token = req.cookies.token;
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, secretKey);
+        req.user = decoded;
+      } catch (error) {
+        console.error("Token inválido ", error);
+      } {
 
+      }
     }
   }
+  
   res.locals.isLoggedIn = req.session.isLoggedIn || false;
   next();
 });

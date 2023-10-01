@@ -15,21 +15,24 @@ block content
         // Panel de chat
         .col-md-4.col-lg-4.bg-light.contacts
           // Contenido del panel de chat
-          each item in [1,2,3,4,5,6,7,8,9,10] 
+          each contact in Contacts  
             .chat-content
               .chat-card
                 .d-flex
                   .chat-image
-                    img(src='noAuthenticated.png' alt='Imagen de Usuario' class='img-fluid rounded-circle')
+                    img(src=`/${contact.User.avatarUrl}` alt='Imagen de Usuario' class='img-fluid rounded-circle')
                   .chat-details
-                    h3.mt-2 ValenCasas
+                    form(action='/chat/messages' method="post")
+                      input(type="hidden" name="friendId" value=contact.User.id)
+                      button(type='submit')=contact.User.name
+
                     .chat-message
                       p Último mensaje del usuario
                     .chat-header
                       span 00:30
 
           .friend__request
-            a Encontrar gente 
+            a(href="#") Buscar gente
 
 
         // Área de chat principal
@@ -38,32 +41,36 @@ block content
           .chat-area
             // Parte superior: Imagen y nombre del chat
             .chat-header
-              .chat-image-header
-                img(src='noAuthenticated.png' alt='Imagen de Usuario')
-              .chat-details
-                h3 ValenCasas
+              if(Friend) 
+                .chat-image-header
+                  img(src=`/${Friend.avatarUrl}` alt='Imagen de Usuario')
+                .chat-details
+                  h3=Friend.name
 
             // Parte media: Mensajes
 
             .chat-messages
-              each item in [1,2,3,4,5,6,7,8,9,10]  
-                // Mensaje de ejemplo
-                .message-friend
-                  .message-sender
-                    strong PiaLucero
-                    p 00:30
-                  .message-text-friend
-                    p Hola, ¿cómo estás?
-
-                .message-me
-                  .message-sender
-                    strong ValenCasas
-                    p 00:30
-                  .message-text-me
-                    p Bien y vos?
+              if Messages
+                each message in Messages
+                  // Mensaje de ejemplo
+                  if message.senderId === req.user.id
+                    .message-me
+                      .message-sender
+                        strong=message.sender.name
+                        p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      .message-text-me
+                        p=message.description
+                  else
+                    .message-friend
+                      .message-sender
+                        strong=message.sender.name
+                        p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      .message-text-friend
+                        p=message.description
 
 
             // Parte inferior: Campo de entrada de mensajes
-            .chat-input
-              input(type='text' placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
+            form(actoin='/chat/send' method='post').chat-input
+              input(type="hidden" name="friendId" value=`${Friend.id}`)
+              input(type='text' name="message" placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
               button.btn.btn-primary.col.col-md-2.col-sm-2 Enviar
