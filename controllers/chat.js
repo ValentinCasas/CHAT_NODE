@@ -56,30 +56,46 @@ exports.getMessages = async (req, res) => {
     });
 
 
-    res.render('chat', { Messages: messages, Contacts: contacts, Friend: friend,req });
+    res.render('chat', { Messages: messages.reverse(), Contacts: contacts, Friend: friend, req });
 
 
 }
 
 
-exports.setMessages = async (req, res) => {
-    try {
-      const { friendId, message } = req.body;
-      const { id } = req.user;
-  
-      const friend = await User.findByPk(friendId);
+// En tu controlador (chatController.js, por ejemplo)
 
-      const newMessage = await Message.create({
-        senderId: id,
-        receiverId: friendId,
-        edited: false,
-        description: message,
-        date: new Date(),
-      });
-  
-      res.json({ success: true, message: 'Mensaje creado con éxito', data: newMessage });
+exports.setMessage = async (req, res) => {
+    try {
+        const { friendId, message } = req.body;
+        const { id } = req.user;
+
+        const friend = await User.findByPk(friendId);
+
+        const newMessage = await Message.create({
+            senderId: id,
+            receiverId: friendId,
+            edited: false,
+            description: message,
+            date: new Date(),
+        });
+
+        // Buscar los usuarios asociados a los IDs
+        const sender = await User.findByPk(id);
+        const receiver = await User.findByPk(friendId);
+
+        res.json({
+            success: true,
+            data: {
+                message: newMessage,
+                sender: {
+                    name: sender.name,
+                },
+                receiver: {
+                    name: receiver.name,
+                },
+            },
+        });
     } catch (error) {
-      res.status(500).json({ success: false, error: 'Error al crear el mensaje', data: null });
+        res.json({ success: false, error: 'Error al enviar el mensaje', data: null });
     }
-  };
-  
+};

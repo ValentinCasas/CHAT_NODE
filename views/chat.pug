@@ -7,6 +7,7 @@ block content
     title Chat
     link(rel="stylesheet" href="/chat.css")
     script(src="/chat.js" defer) 
+    script(src="/jq-chat.js" defer) 
 
   body  
 
@@ -35,11 +36,10 @@ block content
             a(href="#") Buscar gente
 
 
+
         // Área de chat principal
-        .col-md-8.col-lg-8
-          // Contenido del área de chat principal
+        .col-md-8.col-lg-8#chat-area
           .chat-area
-            // Parte superior: Imagen y nombre del chat
             .chat-header
               if(Friend) 
                 .chat-image-header
@@ -50,27 +50,27 @@ block content
             // Parte media: Mensajes
 
             .chat-messages
-              if Messages
-                each message in Messages
-                  // Mensaje de ejemplo
-                  if message.senderId === req.user.id
-                    .message-me
-                      .message-sender
-                        strong=message.sender.name
-                        p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                      .message-text-me
-                        p=message.description
-                  else
-                    .message-friend
-                      .message-sender
-                        strong=message.sender.name
-                        p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                      .message-text-friend
-                        p=message.description
-
+              #messages-container
+                if Messages
+                  each message in Messages
+                    if message.senderId === req.user.id
+                      .message-me
+                        .message-sender
+                          strong=message.sender.name
+                          p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        .message-text-me
+                          p=message.description
+                    else
+                      .message-friend
+                        .message-sender
+                          strong=message.sender.name
+                          p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        .message-text-friend
+                          p=message.description
 
             // Parte inferior: Campo de entrada de mensajes
-            form(actoin='/chat/send' method='post').chat-input
-              input(type="hidden" name="friendId" value=`${Friend.id}`)
-              input(type='text' name="message" placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
-              button.btn.btn-primary.col.col-md-2.col-sm-2 Enviar
+            if Friend
+              form(action='/chat/send' method='post' id='chat-form').chat-input
+                input(type="hidden" name="friendId" value=`${Friend.id}`)
+                input(type='text' id='message-input' name="message" placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
+                button.btn.btn-primary.col.col-md-2.col-sm-2 Enviar
