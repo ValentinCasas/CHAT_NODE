@@ -14,22 +14,64 @@ const SocketIO = require('socket.io');
 const io = SocketIO(server);
 
 
+const connectedSockets = new Map();
+const userChatMap = new Map(); // Mapa que asigna usuarios a sus chats
 
 
 io.on('connection', (socket) => {
   console.log('Un usuario se ha conectado');
 
-  // Escuchar el evento de envío de mensajes desde el cliente
-  socket.on('chat message', (message) => {
-      // Emitir el mensaje a todos los usuarios conectados (incluido el remitente)
-      io.emit('chat message', message);
+  socket.on('setUserId', (userId) => {
+    console.log("----------- www " + userId)
+    connectedSockets.set(userId, socket);
   });
 
-  // Manejar evento de desconexión
+  socket.on('joinChat', (userId, chatId) => {
+    // Registra que el usuario se ha unido a un chat específico
+    if (!userChatMap.has(userId)) {
+      userChatMap.set(userId, new Set());
+    }
+    userChatMap.get(userId).add(chatId);
+  });
+
+  socket.on('message', (data) => {
+    const receiverSocket = connectedSockets.get(data.receiverId);
+
+    if (receiverSocket) {
+      // Verifica si el receptor está en el chat correcto
+      const receiverChats = userChatMap.get(data.receiverId);
+      if (receiverChats && receiverChats.has(data.chatId)) {
+        receiverSocket.emit('message', {
+          senderName: data.senderName,
+          messageText: data.messageText,
+          messageTime: new Date(),
+        });
+      }
+    }
+  });
+
   socket.on('disconnect', () => {
-      console.log('Un usuario se ha desconectado');
+    console.log('Un usuario se ha desconectado');
+
+    // Elimina el socket desconectado de la lista de sockets conectados
+    for (const [userId, connectedSocket] of connectedSockets.entries()) {
+      if (connectedSocket === socket) {
+        connectedSockets.delete(userId);
+        // Elimina al usuario de todos sus chats al desconectarse
+        const userChats = userChatMap.get(userId);
+        if (userChats) {
+          for (const chatId of userChats) {
+            // Realiza la lógica para eliminar al usuario del chat (puede ser un broadcast a los demás miembros)
+          }
+        }
+
+        userChatMap.delete(userId);
+        break;
+      }
+    }
   });
 });
+
 
 
 
@@ -100,3 +142,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+

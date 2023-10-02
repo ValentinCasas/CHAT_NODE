@@ -1,3 +1,62 @@
+
+const socket = io();
+
+
+$(document).ready(function () {
+
+    // Evento para enviar un mensaje
+    $('#contact-form').submit(function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/chat/messages',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+
+                if (response.success) {
+
+                    const messagesContainer = $('#messages-container');
+                    let messageHtml
+                    messagesContainer.empty(); 
+
+                    response.Messages.forEach(function (message) {
+                        messageHtml = `
+                         <div class="message-${message.senderId === response.myId ? 'me' : 'friend'}">
+                           <div class="message-sender">
+                             <strong>${message.sender.name}</strong>
+                             <p>...</p>
+                           </div>
+                           <div class="message-text-${message.senderId === response.myId ? 'me' : 'friend'}">
+                             <p>${message.description}</p>
+                           </div>
+                         </div>
+                        `;
+                    });
+                    
+                    messagesContainer.append(messageHtml);
+                    $('#input-friend').val(response.Friend.id);
+
+                    socket.emit('joinChat', response.myId, response.Friend.id);
+
+                } else {
+                    console.log("errooooooor")
+                }
+
+            },
+            error: function (error) {
+                console.error('Error en la solicitud AJAX:', error);
+            },
+        });
+    });
+
+});
+
+
 $(document).ready(function () {
     $('#chat-form').submit(function (e) {
         e.preventDefault(); // Evita que el formulario se envíe normalmente
@@ -12,36 +71,62 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 if (response.success) {
-                    // Mensaje enviado con éxito, muestra un mensaje en la página
-                    $('#message-input').val(''); // Limpia el campo de entrada de mensajes
 
-                    // Agregar el nuevo mensaje al contenedor de mensajes
-                    var newMessage = response.data.message;
-                    var senderName = response.data.sender.name;
-                    var messageText = newMessage.description;
-                    var messageTime = newMessage.date;
+                    $('#message-input').val('');
 
-                    var messageHtml = `
-                        <div class="message-me">
-                            <div class="message-sender">
-                                <strong>${senderName}</strong>
-                                <p>${messageTime}</p>
-                            </div>
-                            <div class="message-text-me">
-                                <p>${messageText}</p>
-                            </div>
-                        </div>
-                    `;
+                    const myId = response.data.myId;
+                    const senderId = response.data.sender.id;
+                    const receiverId = response.data.receiver.id;
+                    const senderName = response.data.sender.name;
+                    const receiverName = response.data.receiver.name;
+                    const messageText = response.data.message.description;
+                    const messageTime = new Date(response.data.message.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                    // Agregar el nuevo mensaje al final del contenedor
-                    $('#messages-container').append(messageHtml);
+
+
+                    const senderMessageHtml = `
+                <div class="message-me">
+                  <div class="message-sender">
+                    <strong>${senderName}</strong>
+                    <p>${messageTime}</p>
+                  </div>
+                  <div class="message-text-me">
+                    <p>${messageText}</p>
+                  </div>
+                </div>
+              `;
+
+                    // Agregar el nuevo mensaje al contenedor de mensajes del receptor
+                    /*  const receiverMessageHtml = `
+                 <div class="message-friend">
+                   <div class="message-sender">
+                     <strong>${senderName}</strong>
+                     <p>${messageTime}</p>
+                   </div>
+                   <div class="message-text-friend">
+                     <p>${messageText}</p>
+                   </div>
+                 </div>
+               `; */
+
+
+                    $('#messages-container').append(senderMessageHtml);
+
+                    socket.emit('setUserId', senderId);
+
+                    socket.emit('message', {
+                        senderName,
+                        senderId,
+                        receiverName,
+                        receiverId,
+                        messageText,
+                    });
+
                 } else {
-                    // Error al enviar el mensaje, muestra un mensaje de error
-                    alert('Error al enviar el mensaje. Inténtalo de nuevo.');
+                    console.log('Error al enviar el mensaje');
                 }
             },
             error: function (error) {
-                // Manejar errores de la solicitud aquí
                 console.error('Error en la solicitud AJAX:', error);
             },
         });
@@ -51,39 +136,23 @@ $(document).ready(function () {
 
 
 
+socket.on('message', (data) => {
+    const senderName = data.senderName;
+    const messageText = data.messageText;
+    const messageTime = new Date(data.messageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-$(document).ready(function () {
-    const socket = io(); // Inicializa el socket
+    // Agrega el nuevo mensaje al contenedor de mensajes del receptor en tiempo real
+    const receiverMessageHtml = `
+      <div class="message-friend">
+        <div class="message-sender">
+          <strong>${senderName}</strong>
+          <p>${messageTime}</p>
+        </div>
+        <div class="message-text-friend">
+          <p>${messageText}</p>
+        </div>
+      </div>
+    `;
 
-    $('#chat-form').submit(function (e) {
-        e.preventDefault(); // Evita que el formulario se envíe normalmente
-
-        var formData = new FormData(this);
-        var messageText = formData.get('message');
-
-        // Enviar el mensaje al servidor
-        socket.emit('chat message', messageText);
-
-        // Limpia el campo de entrada de mensajes
-        $('#message-input').val('');
-    });
-
-    // Escuchar eventos de mensajes desde el servidor
-    socket.on('chat message', function (message) {
-        // Agregar el nuevo mensaje al contenedor de mensajes
-        // Este es solo un ejemplo simple; puedes personalizar el formato del mensaje
-        var messageHtml = `
-            <div class="message-me">
-                <div class="message-sender">
-                    <strong>Tú</strong>
-                    <p>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                </div>
-                <div class="message-text-me">
-                    <p>${message}</p>
-                </div>
-            </div>
-        `;
-
-        $('#messages-container').append(messageHtml);
-    });
+    $('#messages-container').append(receiverMessageHtml);
 });

@@ -7,6 +7,7 @@ block content
     title Chat
     link(rel="stylesheet" href="/chat.css")
     script(src="/chat.js" defer) 
+    script(src="/socket.io/socket.io.js" charset="utf-8")
     script(src="/jq-chat.js" defer) 
 
   body  
@@ -23,7 +24,7 @@ block content
                   .chat-image
                     img(src=`/${contact.User.avatarUrl}` alt='Imagen de Usuario' class='img-fluid rounded-circle')
                   .chat-details
-                    form(action='/chat/messages' method="post")
+                    form(action='/chat/messages' method="post")#contact-form
                       input(type="hidden" name="friendId" value=contact.User.id)
                       button(type='submit')=contact.User.name
 
@@ -51,26 +52,26 @@ block content
 
             .chat-messages
               #messages-container
-                if Messages
-                  each message in Messages
-                    if message.senderId === req.user.id
-                      .message-me
-                        .message-sender
-                          strong=message.sender.name
-                          p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                        .message-text-me
-                          p=message.description
-                    else
-                      .message-friend
-                        .message-sender
-                          strong=message.sender.name
-                          p= message.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                        .message-text-friend
-                          p=message.description
 
-            // Parte inferior: Campo de entrada de mensajes
-            if Friend
+
+
+                .message-me
+                  .message-sender
+                    strong
+                    p
+                  .message-text-me
+                    p
+
+                .message-friend
+                  .message-sender
+                    strong
+                    p
+                  .message-text-friend
+                    p
+
+              // Parte inferior: Campo de entrada de mensajes
+
               form(action='/chat/send' method='post' id='chat-form').chat-input
-                input(type="hidden" name="friendId" value=`${Friend.id}`)
+                input(type="hidden" name="friendId")#input-friend
                 input(type='text' id='message-input' name="message" placeholder='Escribe tu mensaje...').col.col-md-10.col-sm-10
                 button.btn.btn-primary.col.col-md-2.col-sm-2 Enviar

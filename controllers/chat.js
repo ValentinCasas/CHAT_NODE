@@ -1,7 +1,6 @@
 const { User, Contact, Message } = require("../models");
 const { Op } = require('sequelize');
 
-
 exports.chatView = async (req, res) => {
 
     if (!req.user) {
@@ -48,7 +47,6 @@ exports.getMessages = async (req, res) => {
         order: [['date', 'ASC']],
     });
 
-    console.log(messages)
 
     const contacts = await Contact.findAll({
         where: { userId: id },
@@ -56,7 +54,7 @@ exports.getMessages = async (req, res) => {
     });
 
 
-    res.render('chat', { Messages: messages.reverse(), Contacts: contacts, Friend: friend, req });
+    res.json({success:true, Messages: messages.reverse(), Contacts: contacts, Friend: friend, myId: id });
 
 
 }
@@ -87,12 +85,9 @@ exports.setMessage = async (req, res) => {
             success: true,
             data: {
                 message: newMessage,
-                sender: {
-                    name: sender.name,
-                },
-                receiver: {
-                    name: receiver.name,
-                },
+                sender: { name: sender.name, id: sender.id},
+                receiver: { name: receiver.name, id: receiver.id},
+                myId: id
             },
         });
     } catch (error) {
