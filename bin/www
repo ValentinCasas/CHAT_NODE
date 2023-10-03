@@ -14,62 +14,81 @@ const SocketIO = require('socket.io');
 const io = SocketIO(server);
 
 
-const connectedSockets = new Map();
-const userChatMap = new Map(); // Mapa que asigna usuarios a sus chats
+var userChatList = [];
+var userSocketMap = new Map();
+
+function isBidirectionalConnection(userChatList, senderId, receiverId) {
+  const connection1 = { userId: senderId, chatId: receiverId };
+  const connection2 = { userId: receiverId, chatId: senderId };
+
+  return (
+    userChatList.some((connection) =>
+      connection.userId === connection1.userId &&
+      connection.chatId === connection1.chatId
+    ) &&
+    userChatList.some((connection) =>
+      connection.userId === connection2.userId &&
+      connection.chatId === connection2.chatId
+    )
+  );
+}
 
 
 io.on('connection', (socket) => {
-  console.log('Un usuario se ha conectado');
 
-  socket.on('setUserId', (userId) => {
-    console.log("----------- www " + userId)
-    connectedSockets.set(userId, socket);
-  });
+
 
   socket.on('joinChat', (userId, chatId) => {
-    // Registra que el usuario se ha unido a un chat específico
-    if (!userChatMap.has(userId)) {
-      userChatMap.set(userId, new Set());
+
+    const existingConnection = userChatList.find((connection) => {
+      return connection.userId === userId && connection.chatId === chatId;
+    });
+
+    userSocketMap.set(userId, socket);
+
+    if (!existingConnection) {
+      userChatList.push({ userId, chatId });
     }
-    userChatMap.get(userId).add(chatId);
+
   });
+
+
 
   socket.on('message', (data) => {
-    const receiverSocket = connectedSockets.get(data.receiverId);
+    const senderId = data.senderId;
+    const receiverId = data.receiverId;
+    const messageText = data.messageText;
 
-    if (receiverSocket) {
-      // Verifica si el receptor está en el chat correcto
-      const receiverChats = userChatMap.get(data.receiverId);
-      if (receiverChats && receiverChats.has(data.chatId)) {
-        receiverSocket.emit('message', {
-          senderName: data.senderName,
-          messageText: data.messageText,
-          messageTime: new Date(),
-        });
-      }
+    const receiverSocket = userSocketMap.get(receiverId);
+
+    let isSenderInReceiverChat = isBidirectionalConnection(userChatList, senderId, receiverId);
+
+    const userChatListText = userChatList.map((connection) => `${connection.userId},${connection.chatId}`).join('; ');
+
+
+    if (!isSenderInReceiverChat && receiverSocket) {
+      // Envía el mensaje al receptor solo si el remitente está en su chat
+      receiverSocket.emit('messageReceiver', {
+        senderName: data.senderName,
+        messageText: userChatListText,
+        messageTime: new Date(),
+      });
     }
   });
 
-  socket.on('disconnect', () => {
+
+  /* socket.on('disconnect', () => {
     console.log('Un usuario se ha desconectado');
 
-    // Elimina el socket desconectado de la lista de sockets conectados
-    for (const [userId, connectedSocket] of connectedSockets.entries()) {
-      if (connectedSocket === socket) {
-        connectedSockets.delete(userId);
-        // Elimina al usuario de todos sus chats al desconectarse
-        const userChats = userChatMap.get(userId);
-        if (userChats) {
-          for (const chatId of userChats) {
-            // Realiza la lógica para eliminar al usuario del chat (puede ser un broadcast a los demás miembros)
-          }
-        }
+    const disconnectedUserId = userId;
 
-        userChatMap.delete(userId);
-        break;
-      }
-    }
-  });
+    userChatList = userChatList.filter((connection) => {
+      return connection.userId !== disconnectedUserId;
+    });
+
+  }); */
+
+
 });
 
 

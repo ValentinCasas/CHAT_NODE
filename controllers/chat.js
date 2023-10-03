@@ -53,10 +53,17 @@ exports.getMessages = async (req, res) => {
         include: User,
     });
 
+    res.json({
+        success: true,
+        data: {
+            Messages: messages.reverse(),
+            Contacts: contacts,
+            Friend: friend,
+            myId: id
+        },
+    });
 
-    res.json({success:true, Messages: messages.reverse(), Contacts: contacts, Friend: friend, myId: id });
-
-
+   
 }
 
 
